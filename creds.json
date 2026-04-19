@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "high-diagram-493710-p5",
+  "private_key_id": "ce643f71219b99f4d5c5255b20b7b0dffee03a2f",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQD0Sm2NGLLjspku\n6JdJtr/Fde3MRqJ3JKjG8UTnXvr0ZZLR1Tgp0vdCvNHYpfeksaDT6WDe+13ci4T+\nJitURq//VDKLexuQHHpz3VCP7dPcy+EW0X3Nxkv75Mm/Mvl/uoAVRNCbSAwVBH/B\nXnq8NE1n1WOlgC0F+/BYE9bCLY5ftEZJsUm8iRHDaDGv4au85Mdl6D0I+yZvHnGa\ncAbB6FHfvRednG1cVt8JbQwPsugLCaey8Xmrg9zUHNFLgCthGybpistwrzYoobvi\nqKMIJiF1FMc+81VyZUFcMlpy3p0d3dJTIL2hvwjk+s7IEBia1slBNNRULJDsj1Nu\n09iN6+TfAgMBAAECggEAFGvWXZmndqZa7NNvti9LN7AEiXOMKEaNv1ey6V6EvwJw\ntA7Na52hotgS+LfjDEb3CU/0k59SuNmG7BH3xEtGciMxOHy5kKH40I+7KNT6RXZb\noiMwD5AYkP2OqeeSeM134I9Imvp6XBVsspb5zprWr6vkcRTWbq4haNN7u+6//Jr1\nB78JSK4n3/FK7wfaaKeaL4E43hqeYjCh8cwYLMPTPcBSg7BWq5iu2UWcBlGiUsOY\nTqGE2KEoRYloVTmZup0uRioyGBlVnPXfQg5dhAMfXis81paPZMD6VIRkOcm/e82m\nG+DZcLHDYJ7DHqLlPJvO6XgkZGf38rzaQnG67P4ZsQKBgQD6FiuG27fSodiusEms\nE+6CbsTuDvWEpK0uWdAxESjDLeYtAXLKO4YHzlLd8ablFR9A6Guti/66AGTy3Qfc\nlFijE2/9wE3R94cm5PiURvWsNkNbHv18Ze+p5deDBGLqoUcP/boFzNxHnDeaPEKR\nphHmG/6c4mYHRN9vZEXFXPxU7wKBgQD6ESyaQucK7mKujqluW8o8UNBBVxTppOtD\nd0tf/SYUH43eNAM1vZ5sdY+kCgQ5hTwOOxNQhTNF4y1HhFGGj1EKfZph65Cfo7qF\nquE2Vs5nlk/AYj+50dJR1nDczALAjKg9UhvePXQraMPHNQEw5/am2mXE12prh3Q4\nF1vlIVPPEQKBgGp7Bg1lf98vChNW/AdIdUUT5MV3mRHhC9uwYfSCWdjAskB3XWi9\n71NjheT5/xWK6MO6Mh6yfMK1aEX/1lkU0KienhBs0LWVrvXgh/aaQAATGpqxlzxg\nKqssMZaXR4afJKKqZYoSr7fNy97fyXg6PWS8hqxFuStfJ8NF7m8aKFYBAoGBAO04\nQZGNCdQK1D43Q29XT//rwcNaMpJ6SlvT3QMQCIFqdZBm0uy2FoVY+IxqnBtc0t3F\nGMt3sG4J1jhTw2rcpcpH4J4ncyidjyGiOsbrjh4iL0GXclB6RQQxYxtxxOKYDDkv\nnRQ0Q/GyDpb5J0oXopoh8AzNNT0QYCWdsyUnenOhAoGBAMqSrgJUNgD2vsxKEbM8\np6DV9ZGgn0XF3oefY6L6eXKDc/j338aojkQ20WAQ7QS7r/p723bynPVXWcVPyg1j\nnSrOatoLF9qo4dUbx28ZI5cixRoLxbTt9RWDBjWmtavCuNlzjSbT+sZ3OJEtnNwd\n+gLAhJOmF1O0WOpYOPZw9RKK\n-----END PRIVATE KEY-----\n",
+  "client_email": "kopi-kieta-db@high-diagram-493710-p5.iam.gserviceaccount.com",
+  "client_id": "118239431275045827128",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/kopi-kieta-db%40high-diagram-493710-p5.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
