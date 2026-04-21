@@ -11,20 +11,20 @@ from PIL import Image
 st.set_page_config(page_title="Kopi Kieta Business Suite", page_icon="☕", layout="wide")
 
 # --- KONFIGURASI AI & GOOGLE SHEETS ---
-genai.configure(api_key="AIzaSyCdf7ou8W_ObyCIteD_XTTLNLVgaa4oZ5Q")
+genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 model_ai = genai.GenerativeModel('gemini-1.5-flash')
 
 def get_gsheet_client():
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    # Ambil data murni dari Secrets
+    # Ambil data murni dari secrets
     creds_info = st.secrets["gcp_service_account"]
     
-    # Buat dictionary baru untuk memperbaiki format kunci
+    # Buat dictionary baru untuk memastikan private_key bersih dari spasi liar
     fixed_creds = {
         "type": creds_info["type"],
         "project_id": creds_info["project_id"],
         "private_key_id": creds_info["private_key_id"],
-        "private_key": creds_info["private_key"].replace("\\n", "\n"),
+        "private_key": creds_info["private_key"].strip(), # .strip() menghapus spasi/baris kosong di awal/akhir
         "client_email": creds_info["client_email"],
         "client_id": creds_info["client_id"],
         "auth_uri": creds_info["auth_uri"],
