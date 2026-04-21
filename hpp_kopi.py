@@ -3,7 +3,8 @@ import pandas as pd
 import plotly.express as px
 from datetime import datetime
 import gspread
-from oauth2client.service_account import ServiceAccountCredentials
+# Kita ganti library auth-nya ke yang lebih stabil
+from google.oauth2 import service_account
 import google.generativeai as genai
 from PIL import Image
 
@@ -20,22 +21,27 @@ def get_gsheet_client():
     # Ambil info dari secrets
     creds_info = st.secrets["gcp_service_account"]
     
-    # JURUS PAMUNGKAS: Membersihkan karakter kunci agar terbaca sempurna oleh Google
-    # Kita buat dictionary baru agar data asli di secrets tidak rusak
-    creds_dict = {
-        "type": creds_info["type"],
-        "project_id": creds_info["project_id"],
-        "private_key_id": creds_info["private_key_id"],
-        "private_key": creds_info["private_key"].replace("\\n", "\n").strip(),
-        "client_email": creds_info["client_email"],
-        "client_id": creds_info["client_id"],
-        "auth_uri": creds_info["auth_uri"],
-        "token_uri": creds_info["token_uri"],
-        "auth_provider_x509_cert_url": creds_info["auth_provider_x509_cert_url"],
-        "client_x509_cert_url": creds_info["client_x509_cert_url"]
-    }
+    # Membersihkan private_key agar terbaca sempurna oleh Google
+    # Menggunakan metode yang lebih kuat untuk menangani karakter \n
+    private_key = creds_info["private_key"].replace("\\n", "\n")
     
-    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+    # Gunakan library service_account yang lebih modern (pengganti oauth2client)
+    creds = service_account.Credentials.from_service_account_info(
+        {
+            "type": creds_info["type"],
+            "project_id": creds_info["project_id"],
+            "private_key_id": creds_info["private_key_id"],
+            "private_key": private_key,
+            "client_email": creds_info["client_email"],
+            "client_id": creds_info["client_id"],
+            "auth_uri": creds_info["auth_uri"],
+            "token_uri": creds_info["token_uri"],
+            "auth_provider_x509_cert_url": creds_info["auth_provider_x509_cert_url"],
+            "client_x509_cert_url": creds_info["client_x509_cert_url"],
+        },
+        scopes=scope
+    )
+    
     return gspread.authorize(creds)
 
 def load_data(sheet_name):
