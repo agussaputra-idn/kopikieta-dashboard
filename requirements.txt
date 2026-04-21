@@ -2,6 +2,8 @@ streamlit
 pandas
 plotly
 gspread
+gspread-dataframe
+google-auth
 oauth2client
 google-generativeai
 Pillow
