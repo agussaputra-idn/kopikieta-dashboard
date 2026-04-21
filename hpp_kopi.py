@@ -16,15 +16,17 @@ model_ai = genai.GenerativeModel('gemini-1.5-flash')
 
 def get_gsheet_client():
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    # Ambil data murni dari secrets
+    
+    # Ambil info dari secrets
     creds_info = st.secrets["gcp_service_account"]
     
-    # Buat dictionary baru untuk memastikan private_key bersih dari spasi liar
-    fixed_creds = {
+    # JURUS PAMUNGKAS: Membersihkan karakter kunci agar terbaca sempurna oleh Google
+    # Kita buat dictionary baru agar data asli di secrets tidak rusak
+    creds_dict = {
         "type": creds_info["type"],
         "project_id": creds_info["project_id"],
         "private_key_id": creds_info["private_key_id"],
-        "private_key": creds_info["private_key"].strip(), # .strip() menghapus spasi/baris kosong di awal/akhir
+        "private_key": creds_info["private_key"].replace("\\n", "\n").strip(),
         "client_email": creds_info["client_email"],
         "client_id": creds_info["client_id"],
         "auth_uri": creds_info["auth_uri"],
@@ -33,7 +35,7 @@ def get_gsheet_client():
         "client_x509_cert_url": creds_info["client_x509_cert_url"]
     }
     
-    creds = ServiceAccountCredentials.from_json_keyfile_dict(fixed_creds, scope)
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     return gspread.authorize(creds)
 
 def load_data(sheet_name):
