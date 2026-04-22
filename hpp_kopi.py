@@ -139,13 +139,29 @@ with tab1:
                 h_air = st.number_input("Air (Rp/19L)", min_value=0, value=18000)
         with st.expander("📦 KATEGORI PACKAGING", expanded=False):
             p1, p2 = st.columns(2)
-            h_cup, h_lid = p1.number_input("Cup (Rp/pcs)", 0, 800), p1.number_input("Lid (Rp/pcs)", 0, 200)
-            h_sedotan, h_plastik = p2.number_input("Sedotan (Rp/pcs)", 0, 150), p2.number_input("Plastik (Rp/pcs)", 0, 200)
+            # Menghilangkan batas maksimal (max_value)
+            h_cup = p1.number_input("Cup (Rp/pcs)", min_value=0, value=800)
+            h_lid = p1.number_input("Lid (Rp/pcs)", min_value=0, value=200)
+            h_sedotan = p2.number_input("Sedotan (Rp/pcs)", min_value=0, value=150)
+            h_plastik = p2.number_input("Plastik (Rp/pcs)", min_value=0, value=200)
+
         with st.expander("🧪 RACIKAN PER CUP", expanded=True):
             r1, r2, r3 = st.columns(3)
-            with r1: g_kopi, m_susu, m_skm, g_krimer = st.number_input("Kopi (gr)", 0, 18), st.number_input("Susu (ml)", 0, 100), st.number_input("SKM (gr)", 0, 20), st.number_input("Krimer (gr)", 0, 10)
-            with r2: ml_g_a, g_g_p, ml_syrup, g_bubuk = st.number_input("G. Aren (ml)", 0, 20), st.number_input("G. Pasir (gr)", 0, 0), st.number_input("Syrup (ml)", 0, 10), st.number_input("Bubuk (gr)", 0, 0)
-            with r3: m_es, m_air, h_lain, m_target = st.number_input("Es (gr)", 0, 150), st.number_input("Air (ml)", 0, 50), st.number_input("Lain", 0, 0), st.number_input("Margin %", 0, 30)
+            with r1: 
+                g_kopi = st.number_input("Kopi (gr)", min_value=0, value=18)
+                m_susu = st.number_input("Susu (ml)", min_value=0, value=100)
+                m_skm = st.number_input("SKM (gr)", min_value=0, value=20)
+                g_krimer = st.number_input("Krimer (gr)", min_value=0, value=10)
+            with r2: 
+                ml_g_a = st.number_input("G. Aren (ml)", min_value=0, value=20)
+                g_g_p = st.number_input("G. Pasir (gr)", min_value=0, value=0)
+                ml_syrup = st.number_input("Syrup (ml)", min_value=0, value=10)
+                g_bubuk = st.number_input("Bubuk (gr)", min_value=0, value=0)
+            with r3: 
+                m_es = st.number_input("Es (gr)", min_value=0, value=150)
+                m_air = st.number_input("Air (ml)", min_value=0, value=50)
+                h_lain = st.number_input("Lain", min_value=0, value=0)
+                m_target = st.number_input("Margin %", min_value=0, value=30)
 
     with col_result:
         st.subheader("📊 Analisis Profit")
