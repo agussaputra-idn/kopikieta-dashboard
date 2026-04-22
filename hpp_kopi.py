@@ -15,23 +15,21 @@ st.set_page_config(page_title="Kopi Kieta Business Suite", page_icon="☕", layo
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 model_ai = genai.GenerativeModel('gemini-1.5-flash')
 
+from google.oauth2 import service_account
+
 def get_gsheet_client():
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    
-    # Ambil info dari secrets
     creds_info = st.secrets["gcp_service_account"]
     
-    # Membersihkan private_key agar terbaca sempurna oleh Google
-    # Menggunakan metode yang lebih kuat untuk menangani karakter \n
-    private_key = creds_info["private_key"].replace("\\n", "\n")
+    # Membersihkan karakter \n jika ada, dan menghapus spasi liar
+    cleaned_key = creds_info["private_key"].replace("\\n", "\n").strip()
     
-    # Gunakan library service_account yang lebih modern (pengganti oauth2client)
     creds = service_account.Credentials.from_service_account_info(
         {
             "type": creds_info["type"],
             "project_id": creds_info["project_id"],
             "private_key_id": creds_info["private_key_id"],
-            "private_key": private_key,
+            "private_key": cleaned_key,
             "client_email": creds_info["client_email"],
             "client_id": creds_info["client_id"],
             "auth_uri": creds_info["auth_uri"],
@@ -41,7 +39,6 @@ def get_gsheet_client():
         },
         scopes=scope
     )
-    
     return gspread.authorize(creds)
 
 def load_data(sheet_name):
