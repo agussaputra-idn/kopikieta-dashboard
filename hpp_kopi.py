@@ -248,9 +248,21 @@ with tab2:
         df_p = st.session_state.data_penjualan
         if not df_p.empty:
             ed_j = st.data_editor(df_p, num_rows="dynamic", use_container_width=True, key="ed_j")
+            
+            # --- TAMBAHKAN KODE INI ---
+            total_qty_jual = ed_j['Jumlah'].sum()
+            total_omzet_jual = ed_j['Omzet'].sum()
+            
+            st.markdown(f"""
+                <div style="background-color: #1e2130; padding: 10px; border-radius: 5px; border: 1px solid #00FF00;">
+                    <h4 style="margin:0; color: #00FF00;">💰 Total Penjualan Hari Ini</h4>
+                    <p style="margin:0; font-size: 18px;">Total Item: <b>{total_qty_jual} Cup/Pcs</b> | Total Omzet: <b>Rp {total_omzet_jual:,.0f}</b></p>
+                </div>
+            """, unsafe_allow_html=True)
+            # --------------------------
+
             if st.button("💾 Sinkronkan Edit Penjualan"):
                 if sync_to_gsheets("Penjualan", ed_j): st.session_state.data_penjualan = ed_j; st.rerun()
-            st.plotly_chart(px.bar(ed_j, x="Menu", y="Jumlah", color="Kategori", title="Tren Penjualan"), use_container_width=True)
 
 # ==========================================
 # TAB 3: PEMBELIAN
@@ -317,9 +329,21 @@ with tab3:
         df_b = st.session_state.data_pembelian
         if not df_b.empty:
             ed_b = st.data_editor(df_b, num_rows="dynamic", use_container_width=True, key="ed_b")
+            
+            # --- TAMBAHKAN KODE INI ---
+            total_qty_beli = ed_b['Jumlah'].sum()
+            total_modal_beli = ed_b['Total Harga'].sum()
+
+            st.markdown(f"""
+                <div style="background-color: #1e2130; padding: 10px; border-radius: 5px; border: 1px solid #FF4B4B;">
+                    <h4 style="margin:0; color: #FF4B4B;">🛒 Total Pembelian Hari Ini</h4>
+                    <p style="margin:0; font-size: 18px;">Total Item: <b>{total_qty_beli} Unit</b> | Total Modal: <b>Rp {total_modal_beli:,.0f}</b></p>
+                </div>
+            """, unsafe_allow_html=True)
+            # --------------------------
+
             if st.button("💾 Sinkronkan Edit Pembelian"):
-                if sync_to_gsheets("Pembelian", ed_b): 
-                    st.session_state.data_pembelian = ed_b
+                # ... kode sinkronisasi yang sudah ada ...
                     st.rerun()
             
             # Summary Metrics
