@@ -75,16 +75,16 @@ def sync_to_gsheets(sheet_name, df):
         return False
 
 # --- DATABASE MENU ---
-MENU_COFFEE = {"Brown Sugar": 15000, "Butterscotch": 18000, "Caramel": 18000, "Hazelnut": 18000, "Vanilla": 18000}
-MENU_NON_COFFEE = {"Chocolate Latte": 15000, "Redvelvet Latte": 15000, "Mango Latte": 15000, "Matcha Latte": 18000}
-MENU_TOAST = {"Original": 10000, "Chocolate": 12000, "Strawberry": 12000, "Blueberry": 12000}
+MENU_COFFEE = {"Brown Sugar": 13000, "Butterscotch": 13000, "Caramel": 13000, "Hazelnut": 13000, "Vanilla": 13000}
+MENU_NON_COFFEE = {"Chocolate Latte": 13000, "Redvelvet Latte": 13000, "Mango Latte": 13000, "Matcha Latte": 13000}
+MENU_TOAST = {"Original": 12000, "Chocolate": 12000, "Strawberry": 12000, "Blueberry": 12000}
 
 # --- BARU: SISIPKAN DI SINI ---
 MASTER_HARGA_BELI = {
-    "Kopi": 150000, "Susu UHT": 20000, "Susu SKM": 18000, 
-    "Krimer": 72000, "Bubuk Non-Coffee": 65000, "Gula Aren": 74000, 
-    "Gula Pasir": 18000, "Syrup": 95000, "Es Batu": 16000, "Air Galon": 18000,
-    "Cup Gelas": 800, "Lid/Sealer": 200, "Sedotan": 150, "Kantong Plastik": 200
+    "Kopi": 250000, "Susu UHT": 25000, "Susu SKM": 30000, 
+    "Krimer": 72000, "Bubuk Non-Coffee": 64000, "Gula Aren": 32000, 
+    "Gula Pasir": 18000, "Syrup": 76000, "Es Batu": 16000, "Air Galon": 4000,
+    "Cup Gelas": 700, "Lid/Sealer": 200, "Sedotan": 0, "Kantong Plastik": 0
 }
 
 # Daftar list yang dipakai selectbox tetap dibiarkan
