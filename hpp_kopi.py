@@ -130,20 +130,20 @@ with tab1:
         with st.expander("🥤 KATEGORI BAHAN BAKU", expanded=False):
             c1, c2 = st.columns(2)
             with c1:
-                h_kopi = st.number_input("Kopi (Rp/kg)", min_value=0, value=150000)
+                h_kopi = st.number_input("Kopi (Rp/kg)", min_value=0, value=250000)
                 h_susu = st.number_input("Susu UHT (Rp/L)", min_value=0, value=25000)
-                h_skm = st.number_input("Susu SKM (Rp/kg)", min_value=0, value=20000)
+                h_skm = st.number_input("Susu SKM (Rp/kg)", min_value=0, value=30000)
                 h_krimer = st.number_input("Krimer (Rp/kg)", min_value=0, value=72000)
                 h_bubuk = st.number_input("Bubuk (Rp/kg)", min_value=0, value=65000)
             with c2:
-                h_g_aren = st.number_input("Gula Aren (Rp/L)", min_value=0, value=74000)
+                h_g_aren = st.number_input("Gula Aren (Rp/L)", min_value=0, value=32000)
                 h_g_pasir = st.number_input("Gula Pasir (Rp/kg)", min_value=0, value=18000)
-                h_syrup = st.number_input("Syrup (Rp/750ml)", min_value=0, value=95000)
+                h_syrup = st.number_input("Syrup (Rp/750ml)", min_value=0, value=76000)
                 h_es = st.number_input("Es Batu (Rp/10kg)", min_value=0, value=16000)
-                h_air = st.number_input("Air (Rp/19L)", min_value=0, value=18000)
+                h_air = st.number_input("Air (Rp/19L)", min_value=0, value=4000)
         with st.expander("📦 KATEGORI PACKAGING", expanded=False):
             p1, p2 = st.columns(2)
-            h_cup = p1.number_input("Cup (Rp/pcs)", min_value=0, value=800)
+            h_cup = p1.number_input("Cup (Rp/pcs)", min_value=0, value=700)
             h_lid = p1.number_input("Lid (Rp/pcs)", min_value=0, value=200)
             h_sedotan = p2.number_input("Sedotan (Rp/pcs)", min_value=0, value=150)
             h_plastik = p2.number_input("Plastik (Rp/pcs)", min_value=0, value=200)
