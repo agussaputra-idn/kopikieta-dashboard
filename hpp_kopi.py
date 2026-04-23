@@ -3,7 +3,6 @@ import pandas as pd
 import plotly.express as px
 from datetime import datetime
 import gspread
-# Kita ganti library auth-nya ke yang lebih stabil
 from google.oauth2 import service_account
 import google.generativeai as genai
 from PIL import Image
@@ -15,15 +14,10 @@ st.set_page_config(page_title="Kopi Kieta Business Suite", page_icon="☕", layo
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 model_ai = genai.GenerativeModel('gemini-1.5-flash')
 
-from google.oauth2 import service_account
-
 def get_gsheet_client():
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
     creds_info = st.secrets["gcp_service_account"]
-    
-    # Membersihkan karakter \n jika ada, dan menghapus spasi liar
     cleaned_key = creds_info["private_key"].replace("\\n", "\n").strip()
-    
     creds = service_account.Credentials.from_service_account_info(
         {
             "type": creds_info["type"],
@@ -80,8 +74,7 @@ def sync_to_gsheets(sheet_name, df):
         st.error(f"Gagal sinkronisasi: {e}")
         return False
 
-# --- DATABASE MENU & DAFTAR BAHAN ---
-# Ganti daftar menu lama dengan format ini di bagian atas kode
+# --- DATABASE MENU ---
 MENU_COFFEE = {"Brown Sugar": 15000, "Butterscotch": 18000, "Caramel": 18000, "Hazelnut": 18000, "Vanilla": 18000}
 MENU_NON_COFFEE = {"Chocolate Latte": 15000, "Redvelvet Latte": 15000, "Mango Latte": 15000, "Matcha Latte": 18000}
 MENU_TOAST = {"Original": 10000, "Chocolate": 12000, "Strawberry": 12000, "Blueberry": 12000}
@@ -140,7 +133,6 @@ with tab1:
                 h_air = st.number_input("Air (Rp/19L)", min_value=0, value=18000)
         with st.expander("📦 KATEGORI PACKAGING", expanded=False):
             p1, p2 = st.columns(2)
-            # Menghilangkan batas maksimal (max_value)
             h_cup = p1.number_input("Cup (Rp/pcs)", min_value=0, value=800)
             h_lid = p1.number_input("Lid (Rp/pcs)", min_value=0, value=200)
             h_sedotan = p2.number_input("Sedotan (Rp/pcs)", min_value=0, value=150)
@@ -189,12 +181,14 @@ with tab2:
         foto = st.file_uploader("Upload Foto", type=['jpg','png','jpeg'])
         if foto and st.button("🚀 AI Baca Foto"):
             with st.spinner("Analisis..."):
-                try: res = model_ai.generate_content([f"Rincikan jumlah terjual: {', '.join(MENU_COFFEE + MENU_NON_COFFEE + MENU_TOAST)}.", Image.open(foto)]); st.info(f"Hasil AI: {res.text}")
+                try: 
+                    res = model_ai.generate_content([f"Rincikan jumlah terjual: {', '.join(MENU_COFFEE.keys())}.", Image.open(foto)])
+                    st.info(f"Hasil AI: {res.text}")
                 except Exception as e: st.error(e)
-       with st.form("form_jual", clear_on_submit=True):
+
+        with st.form("form_jual", clear_on_submit=True):
             tgl_j = st.date_input("Tanggal Transaksi", datetime.now())
             
-            # Helper function untuk membuat baris menu agar kode tidak duplikat banyak
             def render_menu_inputs(menu_dict, key_prefix):
                 data_input = {}
                 for m, h_std in menu_dict.items():
@@ -208,13 +202,10 @@ with tab2:
 
             with st.expander("☕ VARIAN COFFEE", expanded=True):
                 res_c = render_menu_inputs(MENU_COFFEE, "c")
-            
             with st.expander("🥤 VARIAN NON-COFFEE", expanded=False):
                 res_nc = render_menu_inputs(MENU_NON_COFFEE, "nc")
-                
             with st.expander("🍞 VARIAN TOAST", expanded=False):
                 res_t = render_menu_inputs(MENU_TOAST, "t")
-
             with st.expander("➕ LAINNYA", expanded=False):
                 cl1, cl2, cl3 = st.columns([2, 1, 1.5])
                 n_l = cl1.text_input("Nama Produk", placeholder="Menu Lain...")
@@ -223,12 +214,9 @@ with tab2:
 
             if st.form_submit_button("Simpan Baru"):
                 rows = []
-                # Proses Kopi, Non-Kopi, dan Toast
                 for cat, res in [("Coffee", res_c), ("Non-Coffee", res_nc), ("Toast", res_t)]:
                     for m, val in res.items():
                         rows.append([str(tgl_j), m, cat, val['qty'], val['qty'] * val['price']])
-                
-                # Proses menu manual lainnya
                 if q_l > 0 and n_l:
                     rows.append([str(tgl_j), n_l, "Lain-lain", q_l, q_l * h_l])
                 
@@ -236,6 +224,7 @@ with tab2:
                     st.session_state.data_penjualan = load_data("Penjualan")
                     st.success("✅ Tersimpan!")
                     st.rerun()
+
         st.divider()
         t_res_j = st.date_input("Reset", datetime.now(), key="res_j")
         if st.button("Hapus Data Penjualan Tanggal Ini", type="secondary"):
@@ -254,7 +243,7 @@ with tab2:
             st.plotly_chart(px.bar(ed_j, x="Menu", y="Jumlah", color="Kategori", title="Tren Penjualan"), use_container_width=True)
 
 # ==========================================
-# TAB 3: PEMBELIAN (TAMBAH KATEGORI LAIN-LAIN)
+# TAB 3: PEMBELIAN
 # ==========================================
 with tab3:
     st.subheader("🛒 Pembelian (Modal)")
@@ -268,22 +257,19 @@ with tab3:
             with st.expander("📦 PACKAGING", expanded=False):
                 i_pk = st.selectbox("Pack", ["-- Pilih --"] + LIST_PACKAGING)
                 h_pk, q_pk = st.number_input("Hrg Satuan ", 0, key="hp"), st.number_input("Qty ", 0, key="qp")
-            
-            # --- MENU TAMBAHAN: LAIN-LAIN ---
             with st.expander("⚙️ LAIN-LAIN / BIAYA TAMBAHAN", expanded=False):
                 i_ll = st.text_input("Nama Pengeluaran (Contoh: Parkir/Galon)")
                 h_ll = st.number_input("Total Biaya (Rp)", 0, key="hl")
-                q_ll = 1 # Default 1 untuk pengeluaran biaya
+                q_ll = 1
 
             if st.form_submit_button("Simpan Belanja"):
                 rows_b = []
                 if i_bb != "-- Pilih --" and q_bb > 0: rows_b.append([str(tgl_b), i_bb, "Bahan Baku", q_bb, h_bb * q_bb])
                 if i_pk != "-- Pilih --" and q_pk > 0: rows_b.append([str(tgl_b), i_pk, "Packaging", q_pk, h_pk * q_pk])
                 if i_ll and h_ll > 0: rows_b.append([str(tgl_b), i_ll, "Lain-lain", q_ll, h_ll])
-                
                 if rows_b and save_to_gsheets("Pembelian", rows_b):
                     st.session_state.data_pembelian = load_data("Pembelian"); st.success("✅ Dicatat!")
-        
+
         st.divider()
         t_res_b = st.date_input("Reset", datetime.now(), key="res_b")
         if st.button("Hapus Data Pembelian Tanggal Ini", type="secondary"):
@@ -299,7 +285,6 @@ with tab3:
             ed_b = st.data_editor(df_b, num_rows="dynamic", use_container_width=True, key="ed_b")
             if st.button("💾 Sinkronkan Edit Pembelian"):
                 if sync_to_gsheets("Pembelian", ed_b): st.session_state.data_pembelian = ed_b; st.rerun()
-            
             omzet = st.session_state.data_penjualan['Omzet'].sum() if not st.session_state.data_penjualan.empty else 0
             belanja = ed_b['Total Harga'].astype(float).sum() if not ed_b.empty else 0
             st.divider()
