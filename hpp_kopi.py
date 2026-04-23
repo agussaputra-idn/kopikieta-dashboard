@@ -81,9 +81,10 @@ def sync_to_gsheets(sheet_name, df):
         return False
 
 # --- DATABASE MENU & DAFTAR BAHAN ---
-MENU_COFFEE = ["Brown Sugar", "Butterscotch", "Caramel", "Hazelnut", "Vanilla"]
-MENU_NON_COFFEE = ["Chocolate Latte", "Redvelvet Latte", "Mango Latte", "Matcha Latte"]
-MENU_TOAST = ["Original", "Chocolate", "Strawberry", "Blueberry"]
+# Ganti daftar menu lama dengan format ini di bagian atas kode
+MENU_COFFEE = {"Brown Sugar": 15000, "Butterscotch": 18000, "Caramel": 18000, "Hazelnut": 18000, "Vanilla": 18000}
+MENU_NON_COFFEE = {"Chocolate Latte": 15000, "Redvelvet Latte": 15000, "Mango Latte": 15000, "Matcha Latte": 18000}
+MENU_TOAST = {"Original": 10000, "Chocolate": 12000, "Strawberry": 12000, "Blueberry": 12000}
 LIST_BAHAN_BAKU = ["Kopi", "Susu UHT", "Susu SKM", "Krimer", "Bubuk Non-Coffee", "Gula Aren", "Gula Pasir", "Syrup", "Es Batu", "Air Galon"]
 LIST_PACKAGING = ["Cup Gelas", "Lid/Sealer", "Sedotan", "Kantong Plastik"]
 
@@ -190,21 +191,51 @@ with tab2:
             with st.spinner("Analisis..."):
                 try: res = model_ai.generate_content([f"Rincikan jumlah terjual: {', '.join(MENU_COFFEE + MENU_NON_COFFEE + MENU_TOAST)}.", Image.open(foto)]); st.info(f"Hasil AI: {res.text}")
                 except Exception as e: st.error(e)
-        with st.form("form_jual", clear_on_submit=True):
+       with st.form("form_jual", clear_on_submit=True):
             tgl_j = st.date_input("Tanggal Transaksi", datetime.now())
+            
+            # Helper function untuk membuat baris menu agar kode tidak duplikat banyak
+            def render_menu_inputs(menu_dict, key_prefix):
+                data_input = {}
+                for m, h_std in menu_dict.items():
+                    col_nm, col_qty, col_prc = st.columns([2, 1, 1.5])
+                    col_nm.markdown(f"<div style='padding-top:10px;'>{m}</div>", unsafe_allow_html=True)
+                    qty = col_qty.number_input("Qty", min_value=0, step=1, key=f"q_{key_prefix}_{m}", label_visibility="collapsed")
+                    price = col_prc.number_input("Harga", min_value=0, value=h_std, step=500, key=f"p_{key_prefix}_{m}", label_visibility="collapsed")
+                    if qty > 0:
+                        data_input[m] = {"qty": qty, "price": price}
+                return data_input
+
             with st.expander("☕ VARIAN COFFEE", expanded=True):
-                q_c = {m: st.number_input(f"{m}", min_value=0, key=f"c_{m}") for m in MENU_COFFEE}
+                res_c = render_menu_inputs(MENU_COFFEE, "c")
+            
             with st.expander("🥤 VARIAN NON-COFFEE", expanded=False):
-                q_nc = {m: st.number_input(f"{m}", min_value=0, key=f"nc_{m}") for m in MENU_NON_COFFEE}
+                res_nc = render_menu_inputs(MENU_NON_COFFEE, "nc")
+                
             with st.expander("🍞 VARIAN TOAST", expanded=False):
-                q_t = {m: st.number_input(f"{m}", min_value=0, key=f"t_{m}") for m in MENU_TOAST}
+                res_t = render_menu_inputs(MENU_TOAST, "t")
+
             with st.expander("➕ LAINNYA", expanded=False):
-                n_l = st.text_input("Nama Produk"); q_l = st.number_input("Qty", 0); h_l = st.number_input("Harga", 0)
+                cl1, cl2, cl3 = st.columns([2, 1, 1.5])
+                n_l = cl1.text_input("Nama Produk", placeholder="Menu Lain...")
+                q_l = cl2.number_input("Qty ", min_value=0)
+                h_l = cl3.number_input("Harga ", min_value=0)
+
             if st.form_submit_button("Simpan Baru"):
-                rows = [[str(tgl_j), m, cat, q, q * h_jual_fix] for cat, d in [("Coffee", q_c), ("Non-Coffee", q_nc), ("Toast", q_t)] for m, q in d.items() if q > 0]
-                if q_l > 0: rows.append([str(tgl_j), n_l, "Lain-lain", q_l, q_l * h_l])
+                rows = []
+                # Proses Kopi, Non-Kopi, dan Toast
+                for cat, res in [("Coffee", res_c), ("Non-Coffee", res_nc), ("Toast", res_t)]:
+                    for m, val in res.items():
+                        rows.append([str(tgl_j), m, cat, val['qty'], val['qty'] * val['price']])
+                
+                # Proses menu manual lainnya
+                if q_l > 0 and n_l:
+                    rows.append([str(tgl_j), n_l, "Lain-lain", q_l, q_l * h_l])
+                
                 if rows and save_to_gsheets("Penjualan", rows):
-                    st.session_state.data_penjualan = load_data("Penjualan"); st.success("✅ Tersimpan!")
+                    st.session_state.data_penjualan = load_data("Penjualan")
+                    st.success("✅ Tersimpan!")
+                    st.rerun()
         st.divider()
         t_res_j = st.date_input("Reset", datetime.now(), key="res_j")
         if st.button("Hapus Data Penjualan Tanggal Ini", type="secondary"):
