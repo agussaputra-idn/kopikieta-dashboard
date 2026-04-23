@@ -78,6 +78,16 @@ def sync_to_gsheets(sheet_name, df):
 MENU_COFFEE = {"Brown Sugar": 15000, "Butterscotch": 18000, "Caramel": 18000, "Hazelnut": 18000, "Vanilla": 18000}
 MENU_NON_COFFEE = {"Chocolate Latte": 15000, "Redvelvet Latte": 15000, "Mango Latte": 15000, "Matcha Latte": 18000}
 MENU_TOAST = {"Original": 10000, "Chocolate": 12000, "Strawberry": 12000, "Blueberry": 12000}
+
+# --- BARU: SISIPKAN DI SINI ---
+MASTER_HARGA_BELI = {
+    "Kopi": 150000, "Susu UHT": 20000, "Susu SKM": 18000, 
+    "Krimer": 72000, "Bubuk Non-Coffee": 65000, "Gula Aren": 74000, 
+    "Gula Pasir": 18000, "Syrup": 95000, "Es Batu": 16000, "Air Galon": 18000,
+    "Cup Gelas": 800, "Lid/Sealer": 200, "Sedotan": 150, "Kantong Plastik": 200
+}
+
+# Daftar list yang dipakai selectbox tetap dibiarkan
 LIST_BAHAN_BAKU = ["Kopi", "Susu UHT", "Susu SKM", "Krimer", "Bubuk Non-Coffee", "Gula Aren", "Gula Pasir", "Syrup", "Es Batu", "Air Galon"]
 LIST_PACKAGING = ["Cup Gelas", "Lid/Sealer", "Sedotan", "Kantong Plastik"]
 
@@ -247,31 +257,55 @@ with tab2:
 # ==========================================
 with tab3:
     st.subheader("🛒 Pembelian (Modal)")
-    col_b1, col_b2 = st.columns([1, 2])
+    col_b1, col_b2 = st.columns([1.2, 2])
+    
     with col_b1:
-        with st.form("form_beli", clear_on_submit=True):
+        with st.form("form_beli_baru", clear_on_submit=True):
             tgl_b = st.date_input("Tanggal Belanja", datetime.now())
+            
+            def render_beli_inputs(items_list, key_prefix):
+                data_beli = {}
+                for item in items_list:
+                    # Ambil harga default dari master, kalau tidak ada set 0
+                    h_default = MASTER_HARGA_BELI.get(item, 0)
+                    c_nm, c_qty, c_prc = st.columns([2, 1, 1.5])
+                    c_nm.markdown(f"<div style='padding-top:10px;'>{item}</div>", unsafe_allow_html=True)
+                    qty = c_qty.number_input("Qty", min_value=0.0, step=0.1, key=f"bq_{key_prefix}_{item}", label_visibility="collapsed")
+                    price = c_prc.number_input("Harga", min_value=0, value=h_default, step=500, key=f"bp_{key_prefix}_{item}", label_visibility="collapsed")
+                    if qty > 0:
+                        data_beli[item] = {"qty": qty, "price": price}
+                return data_beli
+
             with st.expander("🥤 BAHAN BAKU", expanded=True):
-                i_bb = st.selectbox("Bahan", ["-- Pilih --"] + LIST_BAHAN_BAKU)
-                h_bb, q_bb = st.number_input("Hrg Satuan", 0, key="hb"), st.number_input("Qty", 0, key="qb")
+                res_bb = render_beli_inputs(LIST_BAHAN_BAKU, "bb")
+                
             with st.expander("📦 PACKAGING", expanded=False):
-                i_pk = st.selectbox("Pack", ["-- Pilih --"] + LIST_PACKAGING)
-                h_pk, q_pk = st.number_input("Hrg Satuan ", 0, key="hp"), st.number_input("Qty ", 0, key="qp")
+                res_pk = render_beli_inputs(LIST_PACKAGING, "pk")
+            
             with st.expander("⚙️ LAIN-LAIN / BIAYA TAMBAHAN", expanded=False):
-                i_ll = st.text_input("Nama Pengeluaran (Contoh: Parkir/Galon)")
-                h_ll = st.number_input("Total Biaya (Rp)", 0, key="hl")
-                q_ll = 1
+                cl1, cl2, cl3 = st.columns([2, 1, 1.5])
+                i_ll = cl1.text_input("Nama Pengeluaran", placeholder="Contoh: Listrik/Parkir")
+                q_ll = cl2.number_input("Qty ", min_value=0, value=1)
+                h_ll = cl3.number_input("Total Biaya", min_value=0)
 
             if st.form_submit_button("Simpan Belanja"):
                 rows_b = []
-                if i_bb != "-- Pilih --" and q_bb > 0: rows_b.append([str(tgl_b), i_bb, "Bahan Baku", q_bb, h_bb * q_bb])
-                if i_pk != "-- Pilih --" and q_pk > 0: rows_b.append([str(tgl_b), i_pk, "Packaging", q_pk, h_pk * q_pk])
-                if i_ll and h_ll > 0: rows_b.append([str(tgl_b), i_ll, "Lain-lain", q_ll, h_ll])
+                # Proses Bahan Baku & Packaging
+                for cat, res in [("Bahan Baku", res_bb), ("Packaging", res_pk)]:
+                    for item, val in res.items():
+                        rows_b.append([str(tgl_b), item, cat, val['qty'], int(val['qty'] * val['price'])])
+                
+                # Proses Lain-lain
+                if i_ll and h_ll > 0:
+                    rows_b.append([str(tgl_b), i_ll, "Lain-lain", q_ll, h_ll])
+                
                 if rows_b and save_to_gsheets("Pembelian", rows_b):
-                    st.session_state.data_pembelian = load_data("Pembelian"); st.success("✅ Dicatat!")
+                    st.session_state.data_pembelian = load_data("Pembelian")
+                    st.success("✅ Belanja Dicatat!")
+                    st.rerun()
 
         st.divider()
-        t_res_b = st.date_input("Reset", datetime.now(), key="res_b")
+        t_res_b = st.date_input("Reset Data", datetime.now(), key="res_b")
         if st.button("Hapus Data Pembelian Tanggal Ini", type="secondary"):
             df_nb = st.session_state.data_pembelian
             df_newb = df_nb[df_nb['Tanggal'].dt.date != t_res_b]
@@ -284,7 +318,11 @@ with tab3:
         if not df_b.empty:
             ed_b = st.data_editor(df_b, num_rows="dynamic", use_container_width=True, key="ed_b")
             if st.button("💾 Sinkronkan Edit Pembelian"):
-                if sync_to_gsheets("Pembelian", ed_b): st.session_state.data_pembelian = ed_b; st.rerun()
+                if sync_to_gsheets("Pembelian", ed_b): 
+                    st.session_state.data_pembelian = ed_b
+                    st.rerun()
+            
+            # Summary Metrics
             omzet = st.session_state.data_penjualan['Omzet'].sum() if not st.session_state.data_penjualan.empty else 0
             belanja = ed_b['Total Harga'].astype(float).sum() if not ed_b.empty else 0
             st.divider()
