@@ -151,12 +151,12 @@ with tab1:
         with st.expander("🧪 RACIKAN PER CUP", expanded=True):
             r1, r2, r3 = st.columns(3)
             with r1: 
-                g_kopi = st.number_input("Kopi (gr)", min_value=0, value=18)
+                g_kopi = st.number_input("Kopi (gr)", min_value=0, value=4)
                 m_susu = st.number_input("Susu (ml)", min_value=0, value=100)
-                m_skm = st.number_input("SKM (gr)", min_value=0, value=20)
-                g_krimer = st.number_input("Krimer (gr)", min_value=0, value=10)
+                m_skm = st.number_input("SKM (gr)", min_value=0, value=0)
+                g_krimer = st.number_input("Krimer (gr)", min_value=0, value=20)
             with r2: 
-                ml_g_a = st.number_input("G. Aren (ml)", min_value=0, value=20)
+                ml_g_a = st.number_input("G. Aren (ml)", min_value=0, value=10)
                 g_g_p = st.number_input("G. Pasir (gr)", min_value=0, value=0)
                 ml_syrup = st.number_input("Syrup (ml)", min_value=0, value=10)
                 g_bubuk = st.number_input("Bubuk (gr)", min_value=0, value=0)
