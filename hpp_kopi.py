@@ -254,9 +254,12 @@ with tab2:
             total_omzet_jual = ed_j['Omzet'].sum()
             
             st.markdown(f"""
-                <div style="background-color: #1e2130; padding: 10px; border-radius: 5px; border: 1px solid #00FF00;">
-                    <h4 style="margin:0; color: #00FF00;">💰 Total Penjualan Hari Ini</h4>
-                    <p style="margin:0; font-size: 18px;">Total Item: <b>{total_qty_jual} Cup/Pcs</b> | Total Omzet: <b>Rp {total_omzet_jual:,.0f}</b></p>
+                <div style="background-color: #1e2130; padding: 15px; border-radius: 10px; border: 1px solid #00FF00;">
+                    <h4 style="margin:0; color: #00FF00; font-weight: bold;">💰 Total Penjualan Hari Ini</h4>
+                    <p style="margin:0; font-size: 20px; color: white;">
+                        Total Item: <span style="font-weight: bold;">{total_qty_jual} Cup/Pcs</span> | 
+                        Total Omzet: <span style="font-weight: bold; color: #00FF00;">Rp {total_omzet_jual:,.0f}</span>
+                    </p>
                 </div>
             """, unsafe_allow_html=True)
             # --------------------------
@@ -335,9 +338,12 @@ with tab3:
             total_modal_beli = ed_b['Total Harga'].sum()
 
             st.markdown(f"""
-                <div style="background-color: #1e2130; padding: 10px; border-radius: 5px; border: 1px solid #FF4B4B;">
-                    <h4 style="margin:0; color: #FF4B4B;">🛒 Total Pembelian Hari Ini</h4>
-                    <p style="margin:0; font-size: 18px;">Total Item: <b>{total_qty_beli} Unit</b> | Total Modal: <b>Rp {total_modal_beli:,.0f}</b></p>
+                <div style="background-color: #1e2130; padding: 15px; border-radius: 10px; border: 1px solid #FF4B4B;">
+                    <h4 style="margin:0; color: #FF4B4B; font-weight: bold;">🛒 Total Pembelian Hari Ini</h4>
+                    <p style="margin:0; font-size: 20px; color: white;">
+                        Total Item: <span style="font-weight: bold;">{total_qty_beli} Unit</span> | 
+                        Total Modal: <span style="font-weight: bold; color: #FF4B4B;">Rp {total_modal_beli:,.0f}</span>
+                    </p>
                 </div>
             """, unsafe_allow_html=True)
             # --------------------------
